@@ -1,20 +1,21 @@
-# vim: set ft=python :
-
-from __future__ import print_function
-
-from pprint import pprint
 import os
-import time
-import datetime
+import readline
+import rlcompleter
+import atexit
 
+history_file = os.path.join(os.environ['HOME'], '.python_history')
 try:
-    import simplejson as json
-except ImportError:
-    import json
+    readline.read_history_file(history_file)
+except IOError:
+    pass
+readline.parse_and_bind("tab: complete")
+readline.set_history_length(1000)
+atexit.register(readline.write_history_file, history_file)
 
-try:
-    import ipdb
-except ImportError:
-    import pdb
+del readline, rlcompleter, atexit, history_file
 
-print("\npalcu's Python")
+
+# In addition to os, import some useful things:
+import re
+from collections import *
+from itertools import *

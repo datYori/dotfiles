@@ -1,0 +1,5 @@
+[user]
+        name = Isildur1
+        email = yann.bouzonie@gmail.com
+[credential]
+        helper = osxkeychain

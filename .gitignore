@@ -1,2 +1,4 @@
 
 playbooks/osx.retry
+.python_history
+*.backup
