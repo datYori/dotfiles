@@ -5,10 +5,12 @@
   apt: upgrade=dist update_cache=yes
 
 - name: Install libraries using APT
-  apt: name={{ item }} state=latest
+  apt: 
+    name: "{{ item }}"
+    state: latest
   become: yes
   become_method: sudo
-  with_items:
+  loop:
     - ack-grep
     - bash
     - curl
@@ -18,7 +20,6 @@
     - mosh
     - most
     - python
-    - python-pip
     # for FASD
     - python-pycurl
     - python3
@@ -47,12 +48,19 @@
 - name: Get oh-my-zsh
   become: yes
   become_method: sudo
-  script: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  get_url:
+    url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+    dest: /tmp/ohmy_install.sh
+
+- name: Run ohmy_install
+  become: yes
+  become_method: sudo
+  script: /tmp/ohmy_install.sh
 
 - name: Get Powerlevel10k
   become: yes
   become_method: sudo
-  script: git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+  script: git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k}
 
 - name: Get Nerd Fonts
   become: yes
@@ -75,7 +83,7 @@
 - name: Install AWS CLI 2
   become: yes
   become_method: sudo
-  script: /tmp/.aws/install
+  script: /tmp/aws/install
 
 
 - name: Add Hashicorp GPG key
@@ -86,8 +94,9 @@
 - name: Add Hashicorp repo
   become: yes
   become_method: sudo
-  repo: deb [arch=amd64] https://apt.releases.hashicorp.com focal main
-  state: present
+  apt_repository:
+    repo: deb [arch=amd64] https://apt.releases.hashicorp.com focal main
+    state: present
 
 - name: Update packages again
   become: yes
